@@ -1,0 +1,9 @@
+Package: com.maurice.heartbeat
+Name: HeartBeat
+Version: 1.0.0
+Architecture: iphoneos-arm64e
+Description: Injektions-Diagnose: schreibt Marker in App-Container + bindet TCP 8788
+Maintainer: Maurice
+Author: Maurice
+Section: Tweaks
+Depends: mobilesubstrate
