@@ -1,8 +1,8 @@
 Package: com.maurice.revolutguard
 Name: RevolutGuard
-Version: 1.1.0
+Version: 1.2.0
 Architecture: iphoneos-arm64e
-Description: Versteckt JB-Pfade + URL-Schemata + Env-Vars + sysctl vor Revolut (SEON). Erweiterte Erkennungsvektoren: canOpenURL (cydia://, sileo://...), getenv (DYLD_*), sysctlbyname (kern.bootargs).
+Description: Revolut JB-Bypass: voller SEON+Incognia-Pfadkatalog, canOpenURL/getenv/sysctl/opendir/dlsym + dyld-Image-Maskierung.
 Maintainer: Maurice
 Author: Maurice
 Section: Tweaks
