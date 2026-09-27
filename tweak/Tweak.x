@@ -10,6 +10,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <stdint.h>
+#include <mach-o/dyld.h>
 
 // JB-Pfade, die SEON/Incognia/Revolut prüfen und die roothide nicht versteckt.
 // Liste aus der Revolut-Hauptbinary extrahiert (Incognia jailbreak_suspect_urls) + SEON-Liste.
@@ -232,7 +233,7 @@ static void *hook_dlsym(void *handle, const char *symbol) {
     return orig_dlsym(handle, symbol);
 }
 
-// --- _dyld_get_image_name / _dyld_get_image_count: JB-Dylibs aus der Liste nehmen ---
+// --- _dyld_image_count / _dyld_get_image_name: JB-Dylibs aus der Liste nehmen ---
 // Incognia enumeriert geladene Images; unsere injizierten Pfade verstecken.
 static const char *(*orig_dyld_get_image_name)(uint32_t);
 static const char *hook_dyld_get_image_name(uint32_t index) {
@@ -254,9 +255,9 @@ static const char *hook_dyld_get_image_name(uint32_t index) {
     return n;
 }
 
-static uint32_t (*orig_dyld_get_image_count)(void);
-static uint32_t hook_dyld_get_image_count(void) {
-    uint32_t n = orig_dyld_get_image_count();
+static uint32_t (*orig_dyld_image_count)(void);
+static uint32_t hook_dyld_image_count(void) {
+    uint32_t n = orig_dyld_image_count();
     // Count unverändert lassen (Index-Mapping bleibt konsistent über hook_dyld_get_image_name)
     return n;
 }
@@ -294,5 +295,5 @@ static void init(void) {
     MSHookFunction((void *)opendir, (void *)hook_opendir, (void **)&orig_opendir);
     MSHookFunction((void *)dlsym, (void *)hook_dlsym, (void **)&orig_dlsym);
     MSHookFunction((void *)_dyld_get_image_name, (void *)hook_dyld_get_image_name, (void **)&orig_dyld_get_image_name);
-    MSHookFunction((void *)_dyld_get_image_count, (void *)hook_dyld_get_image_count, (void **)&orig_dyld_get_image_count);
+    MSHookFunction((void *)_dyld_image_count, (void *)hook_dyld_image_count, (void **)&orig_dyld_image_count);
 }
