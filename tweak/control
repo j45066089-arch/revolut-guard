@@ -1,0 +1,9 @@
+Package: com.maurice.revolutguard
+Name: RevolutGuard
+Version: 1.0.0
+Architecture: iphoneos-arm64e
+Description: Versteckt JB-Dateipfade vor Revolut (SEON fileExistsAtPath-Checks)
+Maintainer: Maurice
+Author: Maurice
+Section: Tweaks
+Depends: mobilesubstrate
