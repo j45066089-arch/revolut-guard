@@ -4,7 +4,7 @@
 # und liefert für bekannte JB-Pfade "existiert nicht".
 
 ARCHS := arm64 arm64e
-TARGET := iphone:clang:14.0:14.0
+TARGET := iphone:clang:latest:14.0
 INSTALL_TARGET_PROCESSES = Revolut
 
 include $(THEOS)/makefiles/common.mk
