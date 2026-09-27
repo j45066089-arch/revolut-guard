@@ -264,6 +264,12 @@ static uint32_t hook_dyld_image_count(void) {
 
 __attribute__((constructor))
 static void init(void) {
+    // Marker: Läuft dieser Konstruktor im Revolut-Prozess?
+    FILE *m = fopen("/var/tmp/rg_ctor.txt", "a");
+    if (m) {
+        fprintf(m, "%ld ctor lief\n", (long)time(NULL));
+        fclose(m);
+    }
     // Nur in Revolut (Filter-Plists greifen, aber doppelt absichern)
     NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
     if (![bundleId isEqualToString:@"com.revolut.revolut"]) return;
