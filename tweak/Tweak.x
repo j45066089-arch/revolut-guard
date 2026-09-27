@@ -11,6 +11,9 @@
 #include <dirent.h>
 #include <stdint.h>
 #include <mach-o/dyld.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <time.h>
 
 // JB-Pfade, die SEON/Incognia/Revolut prüfen und die roothide nicht versteckt.
 // Liste aus der Revolut-Hauptbinary extrahiert (Incognia jailbreak_suspect_urls) + SEON-Liste.
@@ -264,11 +267,27 @@ static uint32_t hook_dyld_image_count(void) {
 
 __attribute__((constructor))
 static void init(void) {
-    // Marker: Läuft dieser Konstruktor im Revolut-Prozess?
-    FILE *m = fopen("/var/tmp/rg_ctor.txt", "a");
+    // === Wasserdichter Injektionsbeweis (Skill-Pattern):
+    // 1) Marker in den App-Container (HomeDir ist sandbox-schreibbar)
+    // 2) Loopback-TCP-Listen auf 8789 — sandbox-freundlich, von SSH testbar
+    FILE *m = fopen([[NSHomeDirectory() stringByAppendingPathComponent:@"rg_injected.txt"] UTF8String], "a");
     if (m) {
         fprintf(m, "%ld ctor lief\n", (long)time(NULL));
         fclose(m);
+    }
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (fd >= 0) {
+        int on = 1;
+        setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+        struct sockaddr_in a = {0};
+        a.sin_family = AF_INET;
+        a.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+        a.sin_port = htons(8789);
+        if (bind(fd, (struct sockaddr *)&a, sizeof(a)) == 0) {
+            listen(fd, 8);
+        } else {
+            close(fd);
+        }
     }
     // Nur in Revolut (Filter-Plists greifen, aber doppelt absichern)
     NSString *bundleId = [[NSBundle mainBundle] bundleIdentifier];
